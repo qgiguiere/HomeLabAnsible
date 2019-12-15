@@ -1,0 +1,12 @@
+###############################################################################
+# Reboot all servers in the list. Sometimes hangs for a bit as the reboot     #
+# interrupts the connection.                                                  #
+###############################################################################
+
+---
+- name: rebootServers
+  hosts:               #type in host to target by "all", "[GroupName]", "computerName"
+  become: true
+
+- name: "Rebooting Server/s"
+  reboot:

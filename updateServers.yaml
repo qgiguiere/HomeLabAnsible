@@ -1,0 +1,13 @@
+###############################################################################
+# Install all available package upgrades.                                     #
+###############################################################################
+---
+- name: install upgrades
+  hosts:  all         #type in host to target by "all", "[GroupName]", "computerName"
+  become: true
+
+  tasks:
+    - name: "Install all availabe package upgrades"
+      apt: 
+            upgrade: dist
+            update_cache: true

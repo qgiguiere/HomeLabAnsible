@@ -1,0 +1,43 @@
+###############################################################################
+# Grab the ipset list from remote server and write it to a file.              #
+###############################################################################
+
+---
+- name: getList
+  hosts:         #type in host to target by "all", "[GroupName]", "computerName"
+  become: true
+  gather_facts: true
+  vars_prompt:
+          - name: outFile
+            prompt: "Input path to where you want outFile to be created:"
+            private: no
+  tasks:
+
+    - name: "Create file to write to"
+      file:
+              path: "{{ outFile }}"
+              state: touch
+              owner: root
+              group: root
+              mode: 0644
+      delegate_to: localhost
+
+    - name: "Get ipset list file and print"
+      command: "ipset list"
+      register: list
+
+    - name: "add to newlist"
+      set_fact:
+              newlist: "{{ item }}"
+      with_items: "{{ list.stdout_lines }}"
+  
+    - name: "remove non-ip addresses from list"
+      set_fact:
+              donelist: "{{ list.stdout_lines | select('match', '.*/24') | list }}"
+
+    - name: "print to file"
+      copy:
+        dest: "{{ outFile }}"
+        content: "{{ donelist | join('\n') }}"
+      delegate_to: localhost
+

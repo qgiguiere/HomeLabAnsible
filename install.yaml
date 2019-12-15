@@ -1,0 +1,21 @@
+###############################################################################
+# Install a package on a Debian machine using apt.                            #
+# Syntax: fab install:<packageName>                                           #
+###############################################################################
+
+---
+- name: install
+  hosts:        #type in host to target by "all", "[GroupName]", "computerName"
+  become: true
+
+  tasks:
+
+    - name: "Install one or more packages"
+      apt:
+            name:
+                    # Syntax includes "-" ie: - package1
+                    #- vim
+                    #- sudo
+                    #- fortune
+                    #- ...
+            state: latest

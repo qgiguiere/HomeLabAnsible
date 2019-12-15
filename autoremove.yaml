@@ -1,0 +1,14 @@
+###############################################################################
+# Remove all packages that are no longer needed, as determined by apt.        #
+###############################################################################
+
+---
+- name: Autoremove
+  hosts:            #type in host to target by "all", "[GroupName]", "computerName"
+  become: true
+
+  tasks:
+    - name: "Remove packages no longer needed, determined by apt"
+      apt: 
+          autoremove: true
+          purge: true

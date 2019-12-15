@@ -1,0 +1,59 @@
+###############################################################################
+# Deploy blacklist from a local file to a list of remote servers. The list of #
+# IP addresses in the blacklist will be merged with the blacklist already on  #
+# the remote server.                                                          #
+###############################################################################
+
+---
+- name: Deploy
+  hosts:         #type in host to target by "all", "[GroupName]", "computerName"
+  become: true
+  gather_facts: true
+  vars_prompt:
+          - name: BLOCKEDFILE
+            prompt: "Path to BLOCKLIST FILE?"
+            private: no
+
+  vars:
+        myitems: "{{ lookup('file', '{{ BLOCKEDFILE }}').splitlines() }}"
+        newlist: []
+
+  tasks:
+
+    - name: "install ipset"
+      apt:
+              name: "ipset"
+              state: present
+
+    - name: "create ipset directory for blacklist file"
+      file:
+              path: /etc/ipset
+              state: directory
+
+    - name: "create ipset.conf file"
+      file:
+              path: /etc/ipset/ipset.conf
+              state: touch
+              owner: root
+              group: root
+              mode: 0644
+
+    - name: "search for blacknet list"
+      command: "ipset list | grep blacknet"
+      register: rc
+      failed_when: rc == 2
+
+    - name: "create blacket file if it DNE"
+      command: "ipset create blacknet hash:net family inet hashsize 4096 maxelem 65536"
+      register: rc
+      failed_when: rc == 2
+
+    - name: "Get contents from blockedfile"
+      set_fact:
+              new_list: "{{ myitems | map('regex_replace', '^(.*)$', '\\1/24') | list }}"
+
+    - name: "add blockedfile to ipset"
+      block:
+              - shell: "ipset add blacknet {{item}}"
+                with_list: "{{new_list}}"
+              - shell: "ipset save > /etc/ipset/ipset.conf"
