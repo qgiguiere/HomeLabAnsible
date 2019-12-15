@@ -1,38 +1,3 @@
-# LSIpUpdate
-This is a python/fabric script that allows for automated server configuration:
-
-## Commands:
-
-To use a command ```fab <command name>```
-
-### Deploy
-Deploy blacklist from a local file to a list of remote servers. The list of IP addresses in the blacklist will be merged with the blacklist already on the remote server.
-### formatList
-Append /24 to the end of all IP addresses in a blacklist file. This will block all IP addresses in the subnet.
-### unformatList
-Remove the /24 from each IP address in a blacklist file.
-### getList
-Grab the ipset list from remote server and write it to a file.
-### format
-Format a list of items to remove all carriage return and newline chars, then return the formatted list. Can also take string variables with multiple lines, in which case a list will be created by splitting at newlines. The newly created list will then be formatted.                    
-### listUpgrades
-Get a list of all available upgrades on a list of remote Debian servers and save the output locally in a file called UpgradesAvailable.txt. Timestamps are used to ensure that the information is current, and the program will overwrite any output file that is more than TIMEOUT seconds old. This  should allow it enough time to get the information from all the hosts and write them to the file while at the same time preventing the file from containing outdated information. The specific length of time can be changed by changing the value of the variable TIMEOUT. As an extra precaution, a line of '*' characters will be added after all hosts have been checked.
-
-### updateServer
-Install all available package upgrades.
-### autoRemove
-Remove all packages that are no longer needed, as determined by apt.
-### rebootServers
-Reboot all servers in the list. Sometimes hangs for a bit as the reboot interrupts the connection. If it hangs, it can sometimes be "nudged" with a keyboard input.
-
-
-
-
-
-
-
-# Ansible Version
-
 # General Instructions
 At the begining of each job make sure you have a file(inventory) with a list of hosts you want to target (name this file "hosts").
 
